@@ -55,15 +55,20 @@ public:
 //commandArea
 class commandArea
 {
-    string type; //red or blue
-    string line[5];
-    string printMap[10000];
+    
     unsigned int period;//周期
     unsigned int initLive;
     unsigned int remainLive;
     unsigned int warriorLifeSum;
+    
 public:
-    unsigned int times;//
+    string printMap[10000];
+    string line[5];
+    int lineNumber[5];
+    string type; //red or blue
+    unsigned int times;
+    unsigned int printMapLength;
+    //dragon 、ninja、iceman、lion、wolf
     commandArea(string type,unsigned int initLive,unsigned int *lineArray)
     {
         this->type=type;
@@ -75,6 +80,12 @@ public:
             line[2]="wolf";
             line[3]="ninja";
             line[4]="dragon";
+            //
+            lineNumber[0]=lineArray[2];
+            lineNumber[1]=lineArray[3];
+            lineNumber[2]=lineArray[4];
+            lineNumber[3]=lineArray[1];
+            lineNumber[4]=lineArray[0];
         }
         if(type=="blue"){
             line[0]="lion";
@@ -82,11 +93,20 @@ public:
             line[2]="ninja";
             line[3]="iceman";
             line[4]="wolf";
+            //
+            lineNumber[0]=lineArray[3];
+            lineNumber[1]=lineArray[0];
+            lineNumber[2]=lineArray[1];
+            lineNumber[3]=lineArray[2];
+            lineNumber[4]=lineArray[4];
         }
-        this->warriorLifeSum=this->getwarriorLifeSum(lineArray);
-        this->period=this->getPeriod();
-        this->times=this->getTimes(lineArray);
+        
+        this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//总数
+        this->period=this->getPeriod();       //周期
+        this->times=this->getTimes(lineArray);//一共输出的次数
+        this->printMapLength=this->times+1;   //增加停止输出
     }
+    
     unsigned int getwarriorLifeSum(unsigned int *lineArray)
     {
         unsigned int sum=0;
@@ -124,7 +144,29 @@ public:
     }
     void produceWarrior()
     {
-        
+        //
+        if(this->times<5)
+        {
+            this->storeProduceInfoNotEnough();
+        }
+    }
+    void storeProduceInfoNotEnough()
+    {
+        int line;
+        for(int i=0;i<this->times;i++){
+            //head
+            string time=to_string(i);  //id
+            string commandAreaType=this->type;
+            string warriorType=this->line[i];
+            string id=to_string(i+1);
+            string temp="born with strength";
+            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(lineNumber[i]);
+            //tail
+            string tail="1 "+warriorType+" in " +this->type+ " headquarter";
+            printMap[i]=target+","+tail;
+            line=i;
+        }
+        printMap[line++]=this->stopProduceWarrior();
     }
     unsigned int getTimesForNotEnough(unsigned int *lineArray)
     {
@@ -134,30 +176,39 @@ public:
         {
             sum=sum+lineArray[i];
             if(sum>this->initLive){
-                times=--i;
+                times=i;
                 break;
             }
         }
         return times;
     }
     //stop
-    void stopProduceWarrior()
+    string stopProduceWarrior()
     {
         string tail="headquarter stops making warriors";
         string str=this->type+" "+tail;
-        cout<<str<<endl;
+        return str;
     }
-    
 };
 void dealWarrior()
 {
     unsigned int a=20;
     unsigned int b[5]={3,4,5,6,7};
     commandArea red=commandArea("red",a,b);
-    unsigned int redtime=red.times;
     commandArea blue=commandArea("blue",a,b);
-    unsigned int bluetime=blue.times;
-    unsigned maintime=max(redtime,bluetime);
+    red.produceWarrior();
+    blue.produceWarrior();
+    for(int i=0;i<red.printMapLength;i++){
+        cout<<red.printMap[i]<<endl;
+        cout<<blue.printMap[i]<<endl;
+    }
+    
+    
+    
+//    unsigned int redtime=red.times;
+//    commandArea blue=commandArea("blue",a,b);
+//    unsigned int bluetime=blue.times;
+//    unsigned maintime=max(redtime,bluetime);
 
     
     
