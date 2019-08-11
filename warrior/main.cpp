@@ -10,7 +10,16 @@
 #include <stdlib.h>
 #include <string>
 #include <string.h>
+//static int LINE=10000;
 using namespace std;
+//get max
+unsigned int getMax(unsigned int a,unsigned int b)
+{
+    if(a>b){
+        return a;
+    }
+    return b;
+}
 //warrior
 class warrior
 {
@@ -48,11 +57,14 @@ class commandArea
 {
     string type; //red or blue
     string line[5];
+    string printMap[10000];
     unsigned int period;//周期
     unsigned int initLive;
     unsigned int remainLive;
+    unsigned int warriorLifeSum;
 public:
-    commandArea(string type,unsigned int initLive)
+    unsigned int times;//
+    commandArea(string type,unsigned int initLive,unsigned int *lineArray)
     {
         this->type=type;
         this->initLive=initLive;
@@ -71,6 +83,37 @@ public:
             line[3]="iceman";
             line[4]="wolf";
         }
+        this->warriorLifeSum=this->getwarriorLifeSum(lineArray);
+        this->period=this->getPeriod();
+        this->times=this->getTimes(lineArray);
+    }
+    unsigned int getwarriorLifeSum(unsigned int *lineArray)
+    {
+        unsigned int sum=0;
+        for(int i=0;i<5;i++)
+        {
+            sum=sum+lineArray[i];
+        }
+        return sum;
+    }
+    unsigned int getPeriod()
+    {
+        return (this->initLive)%(this->warriorLifeSum);
+        
+    }
+    unsigned int getTimes(unsigned int *lineArray)
+    {
+        //not enough
+        if(this->period==this->initLive){
+            return getTimesForNotEnough(lineArray);
+            
+        }
+        //can get int period
+        if(this->period==0){
+            return (this->initLive)/(this->warriorLifeSum)*5;
+        }
+        //remain last
+        return 0;
     }
     bool judgeCanContinueProduce(warrior w)
     {
@@ -79,8 +122,51 @@ public:
         }
         return true;
     }
+    void produceWarrior(int time)
+    {
+        
+    }
+    unsigned int getTimesForNotEnough(unsigned int *lineArray)
+    {
+        unsigned int sum=0;
+        unsigned int times;
+        for(int i=0;i<5;i++)
+        {
+            sum=sum+lineArray[i];
+            if(sum>this->initLive){
+                times=--i;
+                break;
+            }
+        }
+        return times;
+    }
+    void stopProduceWarrior()
+    {
+        
+    }
     
 };
+void dealWarrior()
+{
+    unsigned int a=20;
+    unsigned int b[5]={3,4,5,6,7};
+    commandArea red=commandArea("red",a,b);
+    unsigned int redtime=red.times;
+    commandArea blue=commandArea("blue",a,b);
+    unsigned int bluetime=blue.times;
+    unsigned maintime=max(redtime,bluetime);
+    for(int i=0;i<maintime;i++)
+    {
+        red.produceWarrior(i);
+        blue.produceWarrior(i);
+    }
+    
+    
+}
 int main() {
+
+    
+
+
     return 0;
 }
