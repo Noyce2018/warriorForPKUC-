@@ -122,7 +122,7 @@ public:
         }
         return true;
     }
-    void produceWarrior(int time)
+    void produceWarrior()
     {
         
     }
@@ -140,9 +140,12 @@ public:
         }
         return times;
     }
+    //stop
     void stopProduceWarrior()
     {
-        
+        string tail="headquarter stops making warriors";
+        string str=this->type+" "+tail;
+        cout<<str<<endl;
     }
     
 };
@@ -155,18 +158,14 @@ void dealWarrior()
     commandArea blue=commandArea("blue",a,b);
     unsigned int bluetime=blue.times;
     unsigned maintime=max(redtime,bluetime);
-    for(int i=0;i<maintime;i++)
-    {
-        red.produceWarrior(i);
-        blue.produceWarrior(i);
-    }
+
     
     
 }
 int main() {
 
     
-
+    dealWarrior();
 
     return 0;
 }
