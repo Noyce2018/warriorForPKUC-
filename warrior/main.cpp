@@ -10,7 +10,8 @@
 #include <stdlib.h>
 #include <string>
 #include <string.h>
-//static int LINE=10000;
+static const int MAX_MAP_LENGTH=10000;
+static const int WARRIOR_TYPE_NUM=5;
 using namespace std;
 //get max
 unsigned int getMax(unsigned int a,unsigned int b)
@@ -25,9 +26,14 @@ class warrior
 {
     unsigned int warriorId;
     unsigned int attack;
+public:
     unsigned int life;
     string type;
-public:
+    warrior(string type,unsigned int life)
+    {
+      this->type=type;
+      this->life=life;
+    }
     warrior(unsigned int warriorId,unsigned int life,string type)
     {
         this->warriorId=warriorId;
@@ -60,11 +66,9 @@ class commandArea
     unsigned int initLive;
     unsigned int remainLive;
     unsigned int warriorLifeSum;
-    
 public:
-    string printMap[10000];
-    string line[5];
-    int lineNumber[5];
+    warrior *warriorTypeList[WARRIOR_TYPE_NUM];//武士列表
+    string printMap[MAX_MAP_LENGTH];
     string type; //red or blue
     unsigned int times;
     unsigned int printMapLength;
@@ -74,31 +78,31 @@ public:
         this->type=type;
         this->initLive=initLive;
         this->remainLive=initLive;
+        warrior *temp;
         if(type=="red"){
-            line[0]="iceman";
-            line[1]="lion";
-            line[2]="wolf";
-            line[3]="ninja";
-            line[4]="dragon";
-            //
-            lineNumber[0]=lineArray[2];
-            lineNumber[1]=lineArray[3];
-            lineNumber[2]=lineArray[4];
-            lineNumber[3]=lineArray[1];
-            lineNumber[4]=lineArray[0];
+            temp=new warrior("iceman",lineArray[2]);
+            warriorTypeList[0]=temp;
+            temp=new warrior("lion",lineArray[3]);
+            warriorTypeList[1]=temp;
+            temp=new warrior("wolf",lineArray[4]);
+            warriorTypeList[2]=temp;
+            temp=new warrior("ninja",lineArray[1]);
+            warriorTypeList[3]=temp;
+            temp=new warrior("dragon",lineArray[0]);
+            warriorTypeList[4]=temp;
+            
         }
         if(type=="blue"){
-            line[0]="lion";
-            line[1]="dragon";
-            line[2]="ninja";
-            line[3]="iceman";
-            line[4]="wolf";
-            //
-            lineNumber[0]=lineArray[3];
-            lineNumber[1]=lineArray[0];
-            lineNumber[2]=lineArray[1];
-            lineNumber[3]=lineArray[2];
-            lineNumber[4]=lineArray[4];
+            temp=new warrior("lion",lineArray[3]);
+            warriorTypeList[0]=temp;
+            temp=new warrior("dragon",lineArray[0]);
+            warriorTypeList[1]=temp;
+            temp=new warrior("ninja",lineArray[1]);
+            warriorTypeList[2]=temp;
+            temp=new warrior("iceman",lineArray[2]);
+            warriorTypeList[3]=temp;
+            temp=new warrior("wolf",lineArray[4]);
+            warriorTypeList[4]=temp;
         }
         
         this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//总数
@@ -157,10 +161,10 @@ public:
             //head
             string time=to_string(i);  //id
             string commandAreaType=this->type;
-            string warriorType=this->line[i];
+            string warriorType=this->warriorTypeList[i]->type;
             string id=to_string(i+1);
             string temp="born with strength";
-            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(lineNumber[i]);
+            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(warriorTypeList[i]->life);
             //tail
             string tail="1 "+warriorType+" in " +this->type+ " headquarter";
             printMap[i]=target+","+tail;
@@ -172,7 +176,7 @@ public:
     {
         unsigned int sum=0;
         unsigned int times;
-        for(int i=0;i<5;i++)
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++)
         {
             sum=sum+lineArray[i];
             if(sum>this->initLive){
