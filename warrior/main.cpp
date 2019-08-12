@@ -58,6 +58,20 @@ public:
         return this->type;
     }
 };
+//count
+class warriorInfo
+{
+public:
+    warrior *w;
+    string name;
+    unsigned int count;
+    warriorInfo(warrior *w)
+    {
+        this->w=w;
+        this->name=w->type;
+        this->count=0;
+    }
+};
 //commandArea
 class commandArea
 {
@@ -67,8 +81,10 @@ class commandArea
     unsigned int remainLive;
     unsigned int warriorLifeSum;
 public:
-    warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];//最后一组
-    warrior *warriorTypeList[WARRIOR_TYPE_NUM];  //武士列表
+    //end
+    warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];  //最后一组
+    warrior *warriorTypeList[WARRIOR_TYPE_NUM];    //武士列表
+    warriorInfo *warriorInfoList[WARRIOR_TYPE_NUM];//武士信息表，多了一个计数
     string printMap[MAX_MAP_LENGTH];
     string type; //red or blue
     unsigned int times;
@@ -81,30 +97,60 @@ public:
         this->initLive=initLive;
         this->remainLive=initLive;
         warrior *temp;
+        warriorInfo *temp_warriorInfo;
         if(type=="red"){
+            //
             temp=new warrior("iceman",lineArray[2]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[0]=temp;
+            warriorInfoList[0]=temp_warriorInfo;
+            //
             temp=new warrior("lion",lineArray[3]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[1]=temp;
+            warriorInfoList[1]=temp_warriorInfo;
+            //
             temp=new warrior("wolf",lineArray[4]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[2]=temp;
+            warriorInfoList[2]=temp_warriorInfo;
+            //
             temp=new warrior("ninja",lineArray[1]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[3]=temp;
+            warriorInfoList[3]=temp_warriorInfo;
+            //
             temp=new warrior("dragon",lineArray[0]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[4]=temp;
+            warriorInfoList[4]=temp_warriorInfo;
             
         }
         if(type=="blue"){
             temp=new warrior("lion",lineArray[3]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[0]=temp;
+            warriorInfoList[0]=temp_warriorInfo;
+            //
             temp=new warrior("dragon",lineArray[0]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[1]=temp;
+            warriorInfoList[1]=temp_warriorInfo;
+            //
             temp=new warrior("ninja",lineArray[1]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[2]=temp;
+            warriorInfoList[2]=temp_warriorInfo;
+            //
             temp=new warrior("iceman",lineArray[2]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[3]=temp;
+            warriorInfoList[3]=temp_warriorInfo;
+            //
             temp=new warrior("wolf",lineArray[4]);
+            temp_warriorInfo=new warriorInfo(temp);
             warriorTypeList[4]=temp;
+            warriorInfoList[4]=temp_warriorInfo;
         }
         
         this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//总数
@@ -167,12 +213,12 @@ public:
             //head
             string time=to_string(i);  //id
             string commandAreaType=this->type;
-            string warriorType=this->warriorTypeList[i]->type;
+            string warriorType=this->lastWarriorList[i]->type;
             string id=to_string(i+1);
             string temp="born with strength";
-            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(warriorTypeList[i]->life);
+            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(lastWarriorList[i]->life);
             //tail
-            string tail="1 "+warriorType+" in " +this->type+ " headquarter";
+            string tail=to_string(this->warriorInfoList[i]->count)+" "+warriorType+" in " +this->type+ " headquarter";
             printMap[i]=target+","+tail;
             line=i;
         }
@@ -182,7 +228,7 @@ public:
     {
         this->lastWarriorListLength=0;
         unsigned int sum=this->initLive;
-        unsigned int remain=0;
+        int remain=0;
         warrior *temp;
         for(int i=0;i<WARRIOR_TYPE_NUM;i++)
         {
@@ -190,8 +236,9 @@ public:
             if(remain>0){
                 temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
                 this->lastWarriorList[i]=temp;
-                sum=remain;
+                this->warriorInfoList[i]->count++;
                 this->lastWarriorListLength++;
+                sum=remain;
             }else{
                 for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
                     remain=sum-this->warriorTypeList[j]->life;
@@ -199,6 +246,7 @@ public:
                       temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
                         this->lastWarriorList[this->lastWarriorListLength]=temp;
                         sum=remain;
+                        this->warriorInfoList[j]->count++;
                         this->lastWarriorListLength++;
                     }
                     
@@ -206,7 +254,6 @@ public:
             }
             
         }
-        this->lastWarriorListLength--;
         return this->lastWarriorListLength;
     }
     //stop
@@ -220,13 +267,13 @@ public:
 void dealWarrior()
 {
     unsigned int a=20;
-    unsigned int b[5]={3,4,7,6,5};
-    //commandArea red=commandArea("red",a,b);
+    unsigned int b[5]={3,4,5,6,7};
+    commandArea red=commandArea("red",a,b);
     commandArea blue=commandArea("blue",a,b);
-    //red.produceWarrior();
+    red.produceWarrior();
     blue.produceWarrior();
     for(int i=0;i<blue.printMapLength;i++){
-        //cout<<red.printMap[i]<<endl;
+        cout<<red.printMap[i]<<endl;
         cout<<blue.printMap[i]<<endl;
     }
     
