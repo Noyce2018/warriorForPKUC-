@@ -222,7 +222,7 @@ public:
             printMap[i]=target+","+tail;
             line=i;
         }
-        printMap[++line]=this->stopProduceWarrior();
+        printMap[++line]=this->stopProduceWarrior(line);
     }
     unsigned int getTimesForNotEnough(unsigned int *lineArray)
     {
@@ -257,40 +257,54 @@ public:
         return this->lastWarriorListLength;
     }
     //stop
-    string stopProduceWarrior()
+    string stopProduceWarrior(int line)
     {
         string tail="headquarter stops making warriors";
-        string str=this->type+" "+tail;
+        string str=to_string(line)+" "+this->type+" "+tail;
         return str;
     }
 };
-void dealWarrior()
+void dealWarrior(unsigned int m,unsigned int *a)
 {
-    unsigned int a=20;
-    unsigned int b[5]={3,4,5,6,7};
-    commandArea red=commandArea("red",a,b);
-    commandArea blue=commandArea("blue",a,b);
+    unsigned int a1=m;
+    unsigned int *b=a;
+    commandArea red=commandArea("red",a1,b);
+    commandArea blue=commandArea("blue",a1,b);
     red.produceWarrior();
     blue.produceWarrior();
     for(int i=0;i<blue.printMapLength;i++){
-        cout<<red.printMap[i]<<endl;
+        if(red.printMap[i]!=""){
+         cout<<red.printMap[i]<<endl;
+        }
+        if(blue.printMap[i]!=""){
         cout<<blue.printMap[i]<<endl;
+        }
+        
     }
     
     
     
-//    unsigned int redtime=red.times;
-//    commandArea blue=commandArea("blue",a,b);
-//    unsigned int bluetime=blue.times;
-//    unsigned maintime=max(redtime,bluetime);
+
 
     
     
 }
 int main() {
-
+ 
+    int N;
+    cin>>N;
+    int i=1;
+    while(N--){
+        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM];
+        cin>>m;
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+            cin>>a[i];
+        }
+        cout<<"Case:"<<i++<<endl;
+        dealWarrior(m,a);
+    }
     
-    dealWarrior();
 
     return 0;
 }
+
