@@ -67,11 +67,13 @@ class commandArea
     unsigned int remainLive;
     unsigned int warriorLifeSum;
 public:
-    warrior *warriorTypeList[WARRIOR_TYPE_NUM];//武士列表
+    warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];//最后一组
+    warrior *warriorTypeList[WARRIOR_TYPE_NUM];  //武士列表
     string printMap[MAX_MAP_LENGTH];
     string type; //red or blue
     unsigned int times;
     unsigned int printMapLength;
+    unsigned int lastWarriorListLength;
     //dragon 、ninja、iceman、lion、wolf
     commandArea(string type,unsigned int initLive,unsigned int *lineArray)
     {
@@ -109,8 +111,12 @@ public:
         this->period=this->getPeriod();       //周期
         this->times=this->getTimes(lineArray);//一共输出的次数
         this->printMapLength=this->times+1;   //增加停止输出
+        this->lastWarriorListLength=0;
     }
-    
+    unsigned int getInitLive()
+    {
+        return this->initLive;
+    }
     unsigned int getwarriorLifeSum(unsigned int *lineArray)
     {
         unsigned int sum=0;
@@ -170,21 +176,38 @@ public:
             printMap[i]=target+","+tail;
             line=i;
         }
-        printMap[line++]=this->stopProduceWarrior();
+        printMap[++line]=this->stopProduceWarrior();
     }
     unsigned int getTimesForNotEnough(unsigned int *lineArray)
     {
-        unsigned int sum=0;
-        unsigned int times;
+        this->lastWarriorListLength=0;
+        unsigned int sum=this->initLive;
+        unsigned int remain=0;
+        warrior *temp;
         for(int i=0;i<WARRIOR_TYPE_NUM;i++)
         {
-            sum=sum+lineArray[i];
-            if(sum>this->initLive){
-                times=i;
-                break;
+            remain=sum-this->warriorTypeList[i]->life;
+            if(remain>0){
+                temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
+                this->lastWarriorList[i]=temp;
+                sum=remain;
+                this->lastWarriorListLength++;
+            }else{
+                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                    remain=sum-this->warriorTypeList[j]->life;
+                    if(remain>0){
+                      temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
+                        this->lastWarriorList[this->lastWarriorListLength]=temp;
+                        sum=remain;
+                        this->lastWarriorListLength++;
+                    }
+                    
+                }
             }
+            
         }
-        return times;
+        this->lastWarriorListLength--;
+        return this->lastWarriorListLength;
     }
     //stop
     string stopProduceWarrior()
@@ -197,13 +220,13 @@ public:
 void dealWarrior()
 {
     unsigned int a=20;
-    unsigned int b[5]={3,4,5,6,7};
-    commandArea red=commandArea("red",a,b);
+    unsigned int b[5]={3,4,7,6,5};
+    //commandArea red=commandArea("red",a,b);
     commandArea blue=commandArea("blue",a,b);
-    red.produceWarrior();
+    //red.produceWarrior();
     blue.produceWarrior();
-    for(int i=0;i<red.printMapLength;i++){
-        cout<<red.printMap[i]<<endl;
+    for(int i=0;i<blue.printMapLength;i++){
+        //cout<<red.printMap[i]<<endl;
         cout<<blue.printMap[i]<<endl;
     }
     
