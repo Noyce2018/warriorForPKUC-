@@ -1,10 +1,4 @@
-//
-//  main.cpp
-//  warrior
-//
-//  Created by Mac on 2019/8/11.
-//  Copyright © 2019年 Mac. All rights reserved.
-//
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,7 +163,8 @@ public:
     unsigned int getwarriorLifeSum(unsigned int *lineArray)
     {
         unsigned int sum=0;
-        for(int i=0;i<5;i++)
+        int i;
+        for(i=0;i<5;i++)
         {
             sum=sum+lineArray[i];
         }
@@ -239,7 +234,8 @@ public:
         unsigned int sum=reminder;
         int remain=0;
         warrior *temp;
-        for(int i=0;i<WARRIOR_TYPE_NUM-1;i++){
+        int i;
+        for(i=0;i<WARRIOR_TYPE_NUM-1;i++){
             remain=sum-this->warriorTypeList[i]->life;
             if(remain>=0){
                 temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
@@ -250,7 +246,8 @@ public:
                 writeProduceInfo(i+length,warriorInfoList[i]);
                 sum=remain;
             }else{
-                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                int j;
+                for(j=i+1;j<WARRIOR_TYPE_NUM;j++){
                     remain=sum-this->warriorTypeList[j]->life;
                     if(remain>0){
                         temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
@@ -273,7 +270,8 @@ public:
         unsigned int sum=this->initLive;
         int remain=0;
         warrior *temp;
-        for(int i=0;i<WARRIOR_TYPE_NUM-1;i++)
+        int i;
+        for(i=0;i<WARRIOR_TYPE_NUM-1;i++)
         {
             remain=sum-this->warriorTypeList[i]->life;
             if(remain>=0){
@@ -285,7 +283,8 @@ public:
                 writeProduceInfo(i,warriorInfoList[i]);
                 sum=remain;
             }else{
-                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                int j;
+                for(j=i+1;j<WARRIOR_TYPE_NUM;j++){
                     remain=sum-this->warriorTypeList[j]->life;
                     if(remain>0){
                         temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
@@ -309,7 +308,8 @@ public:
     {
         int period=this->initLive/this->warriorLifeSum;//计算周期
         //每生产五个武士是一个完整的周期
-        for(int i=0;i<period;i++){
+        int i;
+        for(i=0;i<period;i++){
             produceOnePeriodWarrior(i);
         }
         this->stopProduceWarrior(period*WARRIOR_TYPE_NUM);
@@ -318,7 +318,8 @@ public:
     void produceOnePeriodWarrior(int m)
     {
         warrior *temp;
-        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+        int i;
+        for(i=0;i<WARRIOR_TYPE_NUM;i++){
             temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
             this->lastWarriorList[i]=temp;
             this->warriorInfoList[i]->count++;
@@ -352,7 +353,8 @@ public:
     void storeProduceInfoNotEnough()
     {
         int line;
-        for(int i=0;i<this->times;i++){
+        int i;
+        for(i=0;i<this->times;i++){
             //head
             string time=to_string(i);  //id
             string commandAreaType=this->type;
@@ -370,7 +372,8 @@ public:
     void storeProduceInfoEnoughDevide()
     {
         int line;
-        for(int i=0;i<this->times;i++){
+        int i;
+        for(i=0;i<this->times;i++){
             //head
             string time=to_string(i);  //id
             string commandAreaType=this->type;
@@ -392,7 +395,8 @@ public:
         unsigned int sum=this->initLive;
         int remain=0;
         warrior *temp;
-        for(int i=0;i<WARRIOR_TYPE_NUM;i++)
+        int i;
+        for(i=0;i<WARRIOR_TYPE_NUM;i++)
         {
             remain=sum-this->warriorTypeList[i]->life;
             if(remain>0){
@@ -402,7 +406,8 @@ public:
                 this->lastWarriorListLength++;
                 sum=remain;
             }else{
-                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                int j;
+                for(j=i+1;j<WARRIOR_TYPE_NUM;j++){
                     remain=sum-this->warriorTypeList[j]->life;
                     if(remain>0){
                       temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
@@ -423,7 +428,8 @@ public:
     void dealCanDevideInt(int times)
     {
         int line=0;
-        for(int i=0;i<times;i++){
+        int i;
+        for(i=0;i<times;i++){
             warrior *temp;
             temp=new warrior(this->warriorTypeList[i%WARRIOR_TYPE_NUM]->type,this->warriorTypeList[i%WARRIOR_TYPE_NUM]->life);
             this->lastWarriorList[i%WARRIOR_TYPE_NUM]=temp;
@@ -467,7 +473,8 @@ void dealWarrior(unsigned int m,unsigned int *a)
     commandArea blue=commandArea("blue",a1,b);
     red.produceWarrior();
     blue.produceWarrior();
-    for(int i=0;i<max(red.printMapLength,blue.printMapLength);i++){
+    int i;
+    for(i=0;i<max(red.printMapLength,blue.printMapLength);i++){
         if(red.printMap[i]!=""){
          cout<<red.printMap[i]<<endl;
         }
@@ -479,14 +486,15 @@ void dealWarrior(unsigned int m,unsigned int *a)
 }
 int main() {
  
-    int N=1;
+    int N;
     cin>>N;
     int i=1;
     while(N--){
         unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM];
         cin>>m;
-        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
-            cin>>a[i];
+        int j;
+        for(j=0;j<WARRIOR_TYPE_NUM;j++){
+            cin>>a[j];
         }
 
         cout<<"Case:"<<i++<<endl;
