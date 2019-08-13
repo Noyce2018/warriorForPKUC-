@@ -210,13 +210,12 @@ public:
         //不够：初始化生命值小于五个武士生命之和
         if(this->initLive<this->warriorLifeSum)
         {
-            //this->storeProduceInfoNotEnough();
             this->produceWarriorForNotEnoughLife();
             return;
         }
         //正好整除
         if(this->initLive>=this->warriorLifeSum&&this->remainder==0){
-            //this->storeProduceInfoEnoughDevide();
+            this->produceInfoEnoughDevide();
             return;
         }
         //整除一部分但是剩余一部分
@@ -262,6 +261,29 @@ public:
         }
         this->stopProduceWarrior(this->lastWarriorListLength);
         
+    }
+    //
+    void produceInfoEnoughDevide()
+    {
+        int period=this->initLive/this->warriorLifeSum;//计算周期
+        //每生产五个武士是一个完整的周期
+        for(int i=0;i<period;i++){
+            produceOnePeriodWarrior(i);
+        }
+        this->stopProduceWarrior(period*WARRIOR_TYPE_NUM);
+    }
+    //生产一个周期的武士
+    void produceOnePeriodWarrior(int m)
+    {
+        warrior *temp;
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+            temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
+            this->lastWarriorList[i]=temp;
+            this->warriorInfoList[i]->count++;
+            this->lastWarriorListLength++;
+            //记日志
+            writeProduceInfo(i+WARRIOR_TYPE_NUM*m,warriorInfoList[i]);
+        }
     }
     //记日志
     void writeProduceInfo(int id,warriorInfo *warriorIn)
@@ -413,14 +435,14 @@ int main() {
     //cin>>N;
     int i=1;
     while(N--){
-        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={3,4,5,6,7};;
+        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={4,4,4,4,4};;
 //        cin>>m;
 //        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
 //            cin>>a[i];
 //        }
 
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(20,a);
+        dealWarrior(40,a);
     }
     
 
