@@ -70,19 +70,19 @@ public:
 class commandArea
 {
     
-    unsigned int period;//周期
+    unsigned int remainder;//余数
     unsigned int initLive;
     unsigned int remainLive;
-    unsigned int warriorLifeSum;
+    unsigned int warriorLifeSum;//五个武士生命值之和
 public:
     //end
     warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];  //最后一组
     warrior *warriorTypeList[WARRIOR_TYPE_NUM];    //武士列表
     warriorInfo *warriorInfoList[WARRIOR_TYPE_NUM];//武士信息表，多了一个计数
-    string printMap[MAX_MAP_LENGTH];               //行为日志
+    string printMap[MAX_MAP_LENGTH];               //行为日志表
     string type; //red or blue
     unsigned int times;
-    unsigned int printMapLength;
+    unsigned int printMapLength;                   //日志条数
     unsigned int lastWarriorListLength;
     //dragon 、ninja、iceman、lion、wolf
     commandArea(string type,unsigned int initLive,unsigned int *lineArray)
@@ -147,8 +147,8 @@ public:
             warriorInfoList[4]=temp_warriorInfo;
         }
         
-        this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//总数
-        this->period=this->getPeriod();       //周期
+        this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//获取五个武士生命值之和
+        this->remainder=this->getremainder();       //余数
         this->times=this->getTimes(lineArray);//一共输出的次数
         this->printMapLength=this->times+1;   //增加停止输出
         this->lastWarriorListLength=0;
@@ -166,7 +166,7 @@ public:
         }
         return sum;
     }
-    unsigned int getPeriod()
+    unsigned int getremainder()
     {
         return (this->initLive)%(this->warriorLifeSum);
         
@@ -174,12 +174,12 @@ public:
     unsigned int getTimes(unsigned int *lineArray)
     {
         //not enough
-        if(this->period==this->initLive){
+        if(this->remainder==this->initLive){
             return getTimesForNotEnough(lineArray);
             
         }
-        //can get int period
-        if(this->period==0){
+        //can get int remainder
+        if(this->remainder==0){
             int target=(this->initLive)/(this->warriorLifeSum)*5;
             this->dealCanDevideInt(target);
             return target;
@@ -348,7 +348,7 @@ int main() {
 //        }
 
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(80,a);
+        dealWarrior(40,a);
     }
     
 
