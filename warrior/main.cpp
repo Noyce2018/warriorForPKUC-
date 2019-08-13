@@ -74,6 +74,7 @@ class commandArea
     unsigned int initLive;
     unsigned int remainLive;
     unsigned int warriorLifeSum;//五个武士生命值之和
+    unsigned int liveArray[WARRIOR_TYPE_NUM];//输入的数组
 public:
     //end
     warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];  //最后一组
@@ -90,6 +91,9 @@ public:
         this->type=type;
         this->initLive=initLive;
         this->remainLive=initLive;
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+            liveArray[i]=lineArray[i];
+        }
         warrior *temp;
         warriorInfo *temp_warriorInfo;
         if(type=="red"){
@@ -149,9 +153,7 @@ public:
         
         this->warriorLifeSum=this->getwarriorLifeSum(lineArray);//获取五个武士生命值之和
         this->remainder=this->getremainder();       //余数
-        this->times=this->getTimes(lineArray);//一共输出的次数
-        this->printMapLength=this->times+1;   //增加停止输出
-        this->lastWarriorListLength=0;
+        this->lastWarriorListLength=0;              //日志条数，初始化为0
     }
     unsigned int getInitLive()
     {
@@ -196,17 +198,85 @@ public:
     }
     void produceWarrior()
     {
-        //not enough
-        if(this->times<5)
+        /*
+        三种情况
+        1.不够
+        2.正好整除
+        3.整除一段+余数一段
+        */
+        //this->times=this->getTimes(this->liveArray);      //一共输出的次数
+        //this->printMapLength=this->times+1;               //增加停止输出
+        
+        //不够：初始化生命值小于五个武士生命之和
+        if(this->initLive<this->warriorLifeSum)
         {
-            this->storeProduceInfoNotEnough();
+            //this->storeProduceInfoNotEnough();
+            this->produceWarriorForNotEnoughLife();
             return;
         }
-        //正好没剩下
-        if(this->times%5==0){
+        //正好整除
+        if(this->initLive>=this->warriorLifeSum&&this->remainder==0){
             //this->storeProduceInfoEnoughDevide();
             return;
         }
+        //整除一部分但是剩余一部分
+        if(this->initLive>this->warriorLifeSum&&this->remainder!=0){
+            //this->storeProduceInfoEnoughDevide();
+            return;
+        }
+        
+    }
+    //不够情况下的生产武士(生产的同时记日志)
+    void produceWarriorForNotEnoughLife()
+    {
+        unsigned int sum=this->initLive;
+        int remain=0;
+        warrior *temp;
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++)
+        {
+            remain=sum-this->warriorTypeList[i]->life;
+            if(remain>0){
+                temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
+                this->lastWarriorList[i]=temp;
+                this->warriorInfoList[i]->count++;
+                this->lastWarriorListLength++;
+                //记日志
+                writeProduceInfo(i,warriorInfoList[i]);
+                sum=remain;
+            }else{
+                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                    remain=sum-this->warriorTypeList[j]->life;
+                    if(remain>0){
+                        temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
+                        this->lastWarriorList[this->lastWarriorListLength]=temp;
+                        sum=remain;
+                        this->warriorInfoList[j]->count++;
+                        this->lastWarriorListLength++;
+                        //记日志
+                        writeProduceInfo(j,warriorInfoList[j]);
+                    }
+                    
+                }
+            }
+            
+        }
+        this->stopProduceWarrior(++this->lastWarriorListLength);
+        
+    }
+    //记日志
+    void writeProduceInfo(int id,warriorInfo *warriorIn)
+    {
+        string time=to_string(id);
+        string commandAreaType=this->type;//红蓝司令部
+        string warriorType=warriorIn->name;
+        string birthId=to_string(id+1);
+        string temp="born with strength";
+        //head
+        string target=time+" "+commandAreaType+" "+warriorType+" "+birthId+" "+temp+" "+to_string(warriorIn->w->getLife());
+        //tail
+        //string one="1";
+        string tail=to_string(warriorIn->count)+" "+warriorType+" in " +this->type+ " headquarter";
+        printMap[id]=target+","+tail;
         
     }
     void storeProduceInfoNotEnough()
@@ -225,7 +295,7 @@ public:
             printMap[i]=target+","+tail;
             line=i;
         }
-        printMap[++line]=this->stopProduceWarrior(line);
+        //printMap[++line]=this->stopProduceWarrior(line);
     }
     void storeProduceInfoEnoughDevide()
     {
@@ -243,7 +313,7 @@ public:
             printMap[i]=target+","+tail;
             line=i;
         }
-        printMap[++line]=this->stopProduceWarrior(line);
+        //printMap[++line]=this->stopProduceWarrior(line);
     }
     //实际生产的过程
     unsigned int getTimesForNotEnough(unsigned int *lineArray)
@@ -300,14 +370,15 @@ public:
             printMap[i]=target+","+tail;
             line=i;
         }
-        printMap[++line]=this->stopProduceWarrior(line);
+        //printMap[++line]=this->stopProduceWarrior(line);
     }
     //stop
-    string stopProduceWarrior(int line)
+    void stopProduceWarrior(int line)
     {
         string tail="headquarter stops making warriors";
         string str=to_string(line)+" "+this->type+" "+tail;
-        return str;
+        //return str;
+        printMap[++line]=str;
     }
 };
 void dealWarrior(unsigned int m,unsigned int *a)
@@ -341,14 +412,14 @@ int main() {
     //cin>>N;
     int i=1;
     while(N--){
-        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={4,4,4,4,4};;
+        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={3,4,5,6,7};;
 //        cin>>m;
 //        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
 //            cin>>a[i];
 //        }
 
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(40,a);
+        dealWarrior(20,a);
     }
     
 
