@@ -13,6 +13,13 @@
 static const int MAX_MAP_LENGTH=10000;
 static const int WARRIOR_TYPE_NUM=5;
 using namespace std;
+int max(int a,int b)
+{
+    if(a>b){
+        return a;
+    }
+    return b;
+}
 //warrior
 class warrior
 {
@@ -324,6 +331,12 @@ public:
     void writeProduceInfo(int id,warriorInfo *warriorIn)
     {
         string time=to_string(id);
+        if(time.length()==1){
+            time="00"+time;
+        }
+        if(time.length()==2){
+            time="0"+time;
+        }
         string commandAreaType=this->type;//红蓝司令部
         string warriorType=warriorIn->name;
         string birthId=to_string(id+1);
@@ -432,8 +445,15 @@ public:
     //stop
     void stopProduceWarrior(int line)
     {
+        string time=to_string(line);
+        if(time.length()==1){
+            time="00"+time;
+        }
+        if(time.length()==2){
+            time="0"+time;
+        }
         string tail="headquarter stops making warriors";
-        string str=to_string(line)+" "+this->type+" "+tail;
+        string str=time+" "+this->type+" "+tail;
         //return str;
         printMap[line]=str;
         this->printMapLength=++line;
@@ -447,7 +467,7 @@ void dealWarrior(unsigned int m,unsigned int *a)
     commandArea blue=commandArea("blue",a1,b);
     red.produceWarrior();
     blue.produceWarrior();
-    for(int i=0;i<MAX_MAP_LENGTH;i++){
+    for(int i=0;i<max(red.printMapLength,blue.printMapLength);i++){
         if(red.printMap[i]!=""){
          cout<<red.printMap[i]<<endl;
         }
@@ -456,28 +476,21 @@ void dealWarrior(unsigned int m,unsigned int *a)
         }
         
     }
-    
-    
-    
-
-
-    
-    
 }
 int main() {
  
     int N=1;
-    //cin>>N;
+    cin>>N;
     int i=1;
     while(N--){
-        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={4,4,4,4,4};;
-//        cin>>m;
-//        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
-//            cin>>a[i];
-//        }
+        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM];
+        cin>>m;
+        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+            cin>>a[i];
+        }
 
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(24,a);
+        dealWarrior(m,a);
     }
     
 
