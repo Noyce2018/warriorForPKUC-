@@ -186,7 +186,9 @@ public:
         }
         //can get int period
         if(this->period==0){
-            return (this->initLive)/(this->warriorLifeSum)*5;
+            int target=(this->initLive)/(this->warriorLifeSum)*5;
+            this->dealCanDevideInt(target);
+            return target;
         }
         //remain last
         return 0;
@@ -200,11 +202,18 @@ public:
     }
     void produceWarrior()
     {
-        //
+        //not enough
         if(this->times<5)
         {
             this->storeProduceInfoNotEnough();
+            return;
         }
+        //正好没剩下
+        if(this->times%5==0){
+            this->storeProduceInfoEnoughDevide();
+            return;
+        }
+        
     }
     void storeProduceInfoNotEnough()
     {
@@ -219,6 +228,24 @@ public:
             string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(lastWarriorList[i]->life);
             //tail
             string tail=to_string(this->warriorInfoList[i]->count)+" "+warriorType+" in " +this->type+ " headquarter";
+            printMap[i]=target+","+tail;
+            line=i;
+        }
+        printMap[++line]=this->stopProduceWarrior(line);
+    }
+    void storeProduceInfoEnoughDevide()
+    {
+        int line;
+        for(int i=0;i<this->times;i++){
+            //head
+            string time=to_string(i);  //id
+            string commandAreaType=this->type;
+            string warriorType=this->lastWarriorList[i%WARRIOR_TYPE_NUM]->type;
+            string id=to_string(i+1);
+            string temp="born with strength";
+            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp+" "+to_string(lastWarriorList[i%WARRIOR_TYPE_NUM]->life);
+            //tail
+            string tail=to_string(this->warriorInfoList[i%WARRIOR_TYPE_NUM]->count)+" "+warriorType+" in " +this->type+ " headquarter";
             printMap[i]=target+","+tail;
             line=i;
         }
@@ -256,6 +283,18 @@ public:
         }
         return this->lastWarriorListLength;
     }
+    //deal int devide
+    void dealCanDevideInt(int times)
+    {
+        for(int i=0;i<times;i++){
+            warrior *temp;
+            temp=new warrior(this->warriorTypeList[i%WARRIOR_TYPE_NUM]->type,this->warriorTypeList[i%WARRIOR_TYPE_NUM]->life);
+            this->lastWarriorList[i%WARRIOR_TYPE_NUM]=temp;
+            this->warriorInfoList[i%WARRIOR_TYPE_NUM]->count++;
+            this->lastWarriorListLength++;
+            //日志记在此处，否则所有武士数量都是最终的
+        }
+    }
     //stop
     string stopProduceWarrior(int line)
     {
@@ -291,17 +330,18 @@ void dealWarrior(unsigned int m,unsigned int *a)
 }
 int main() {
  
-    int N;
-    cin>>N;
+    int N=1;
+    //cin>>N;
     int i=1;
     while(N--){
-        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM];
-        cin>>m;
-        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
-            cin>>a[i];
-        }
+        unsigned int  m;unsigned int a[WARRIOR_TYPE_NUM]={4,4,4,4,4};;
+//        cin>>m;
+//        for(int i=0;i<WARRIOR_TYPE_NUM;i++){
+//            cin>>a[i];
+//        }
+
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(m,a);
+        dealWarrior(80,a);
     }
     
 
