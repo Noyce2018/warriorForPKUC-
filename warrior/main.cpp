@@ -13,22 +13,16 @@
 static const int MAX_MAP_LENGTH=10000;
 static const int WARRIOR_TYPE_NUM=5;
 using namespace std;
-//get max
-unsigned int getMax(unsigned int a,unsigned int b)
-{
-    if(a>b){
-        return a;
-    }
-    return b;
-}
 //warrior
 class warrior
 {
     unsigned int warriorId;
     unsigned int attack;
-public:
     unsigned int life;
     string type;
+public:
+    friend class warriorInfo;
+    friend class commandArea;
     warrior(string type,unsigned int life)
     {
       this->type=type;
@@ -85,7 +79,7 @@ public:
     warrior *lastWarriorList[WARRIOR_TYPE_NUM-1];  //最后一组
     warrior *warriorTypeList[WARRIOR_TYPE_NUM];    //武士列表
     warriorInfo *warriorInfoList[WARRIOR_TYPE_NUM];//武士信息表，多了一个计数
-    string printMap[MAX_MAP_LENGTH];
+    string printMap[MAX_MAP_LENGTH];               //行为日志
     string type; //red or blue
     unsigned int times;
     unsigned int printMapLength;
@@ -210,7 +204,7 @@ public:
         }
         //正好没剩下
         if(this->times%5==0){
-            this->storeProduceInfoEnoughDevide();
+            //this->storeProduceInfoEnoughDevide();
             return;
         }
         
@@ -251,6 +245,7 @@ public:
         }
         printMap[++line]=this->stopProduceWarrior(line);
     }
+    //实际生产的过程
     unsigned int getTimesForNotEnough(unsigned int *lineArray)
     {
         this->lastWarriorListLength=0;
@@ -284,16 +279,28 @@ public:
         return this->lastWarriorListLength;
     }
     //deal int devide
+    //实际生产的过程
     void dealCanDevideInt(int times)
     {
+        int line=0;
         for(int i=0;i<times;i++){
             warrior *temp;
             temp=new warrior(this->warriorTypeList[i%WARRIOR_TYPE_NUM]->type,this->warriorTypeList[i%WARRIOR_TYPE_NUM]->life);
             this->lastWarriorList[i%WARRIOR_TYPE_NUM]=temp;
             this->warriorInfoList[i%WARRIOR_TYPE_NUM]->count++;
             this->lastWarriorListLength++;
-            //日志记在此处，否则所有武士数量都是最终的
+            string time=to_string(i);  //id
+            string commandAreaType=this->type;
+            string warriorType=this->lastWarriorList[i%WARRIOR_TYPE_NUM]->type;
+            string id=to_string(i+1);
+            string temp0="born with strength";
+            string target=time+" "+commandAreaType+" "+warriorType+" "+id+" "+temp0+" "+to_string(lastWarriorList[i%WARRIOR_TYPE_NUM]->life);
+            //tail
+            string tail=to_string(this->warriorInfoList[i%WARRIOR_TYPE_NUM]->count)+" "+warriorType+" in " +this->type+ " headquarter";
+            printMap[i]=target+","+tail;
+            line=i;
         }
+        printMap[++line]=this->stopProduceWarrior(line);
     }
     //stop
     string stopProduceWarrior(int line)
