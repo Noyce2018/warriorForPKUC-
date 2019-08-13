@@ -204,9 +204,7 @@ public:
         2.正好整除
         3.整除一段+余数一段
         */
-        //this->times=this->getTimes(this->liveArray);      //一共输出的次数
-        //this->printMapLength=this->times+1;               //增加停止输出
-        
+    
         //不够：初始化生命值小于五个武士生命之和
         if(this->initLive<this->warriorLifeSum)
         {
@@ -220,10 +218,47 @@ public:
         }
         //整除一部分但是剩余一部分
         if(this->initLive>this->warriorLifeSum&&this->remainder!=0){
-            //this->storeProduceInfoEnoughDevide();
+            //处理整除部分
+            this->produceInfoEnoughDevide();
+            //处理剩余部分
+            this->dealRemain(this->remainder,this->printMapLength);
             return;
         }
         
+    }
+    //处理剩余部分
+    void dealRemain(unsigned int reminder,unsigned int length)
+    {
+        unsigned int sum=reminder;
+        int remain=0;
+        warrior *temp;
+        for(int i=0;i<WARRIOR_TYPE_NUM-1;i++){
+            remain=sum-this->warriorTypeList[i]->life;
+            if(remain>=0){
+                temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
+                this->lastWarriorList[i]=temp;
+                this->warriorInfoList[i]->count++;
+                this->lastWarriorListLength++;
+                //记日志
+                writeProduceInfo(i+length,warriorInfoList[i]);
+                sum=remain;
+            }else{
+                for(int j=i+1;j<WARRIOR_TYPE_NUM;j++){
+                    remain=sum-this->warriorTypeList[j]->life;
+                    if(remain>0){
+                        temp=new warrior(this->warriorTypeList[j]->type,this->warriorTypeList[j]->life);
+                        this->lastWarriorList[this->lastWarriorListLength]=temp;
+                        sum=remain;
+                        this->warriorInfoList[j]->count++;
+                        this->lastWarriorListLength++;
+                        //记日志
+                        writeProduceInfo(j+length,warriorInfoList[j]);
+                    }
+                    
+                }
+            }
+        }
+        this->stopProduceWarrior(++this->lastWarriorListLength);
     }
     //不够情况下的生产武士(生产的同时记日志)
     void produceWarriorForNotEnoughLife()
@@ -231,10 +266,10 @@ public:
         unsigned int sum=this->initLive;
         int remain=0;
         warrior *temp;
-        for(int i=0;i<WARRIOR_TYPE_NUM;i++)
+        for(int i=0;i<WARRIOR_TYPE_NUM-1;i++)
         {
             remain=sum-this->warriorTypeList[i]->life;
-            if(remain>0){
+            if(remain>=0){
                 temp=new warrior(this->warriorTypeList[i]->type,this->warriorTypeList[i]->life);
                 this->lastWarriorList[i]=temp;
                 this->warriorInfoList[i]->count++;
@@ -442,7 +477,7 @@ int main() {
 //        }
 
         cout<<"Case:"<<i++<<endl;
-        dealWarrior(40,a);
+        dealWarrior(24,a);
     }
     
 
