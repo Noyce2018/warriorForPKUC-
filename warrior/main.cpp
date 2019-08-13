@@ -379,6 +379,7 @@ public:
         string str=to_string(line)+" "+this->type+" "+tail;
         //return str;
         printMap[++line]=str;
+        this->printMapLength=line;
     }
 };
 void dealWarrior(unsigned int m,unsigned int *a)
@@ -389,7 +390,7 @@ void dealWarrior(unsigned int m,unsigned int *a)
     commandArea blue=commandArea("blue",a1,b);
     red.produceWarrior();
     blue.produceWarrior();
-    for(int i=0;i<blue.printMapLength;i++){
+    for(int i=0;i<MAX_MAP_LENGTH;i++){
         if(red.printMap[i]!=""){
          cout<<red.printMap[i]<<endl;
         }
