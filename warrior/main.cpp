@@ -260,7 +260,7 @@ public:
             }
             
         }
-        this->stopProduceWarrior(++this->lastWarriorListLength);
+        this->stopProduceWarrior(this->lastWarriorListLength);
         
     }
     //记日志
@@ -378,8 +378,8 @@ public:
         string tail="headquarter stops making warriors";
         string str=to_string(line)+" "+this->type+" "+tail;
         //return str;
-        printMap[++line]=str;
-        this->printMapLength=line;
+        printMap[line]=str;
+        this->printMapLength=++line;
     }
 };
 void dealWarrior(unsigned int m,unsigned int *a)
